@@ -9,6 +9,7 @@
 
     <div class="clock">
       <div class="clock-face">
+        <div class="circle"></div>
         <div class="hand hour-hand"></div>
         <div class="hand min-hand"></div>
         <div class="hand second-hand"></div>
@@ -56,19 +57,58 @@
       transform: translateY(-3px); /* account for the height of the clock hands */
     }
 
+    .hand, .circle {
+      background: white;
+      position: absolute;
+    }
+
     .hand {
       width:50%;
+      top: 50%;
       height:6px;
-      background:black;
-      position: absolute;
-      top:50%;
+      transform-origin: 100%; /* x-axis */
+      transform: rotate(90deg);
+      transition-timing-function: cubic-bezier(0.15, 1.05, 0.52, 1.44);
+    }
+
+    .circle {
+      top: 48%;
+      height: 18px;
+      left: 47%;
+      width: 18px;
+      border-radius: 50%;
+    }
+
+    .second-hand {
+      background: rgba(255, 255, 255, .1);
     }
 
   </style>
 
   <script>
+    const HOUR_HAND = document.querySelector('.hour-hand');
+    const MINUTE_HAND = document.querySelector('.min-hand');
+    const SECOND_HAND = document.querySelector('.second-hand');
 
+    function setDate(){
+      const NOW = new Date();
+      const HOURS = NOW.getHours();
+      const MINUTES = NOW.getMinutes();
+      const SECONDS = NOW.getSeconds();
 
+      // hours, plus some weight based on the minute
+      const HOURS_DEGREES = ((HOURS - 12) * 30) + (MINUTES/60) + 90;
+      const MINUTES_DEGREES = ((MINUTES/60) * 360) + ((SECONDS/60)*6) + 90;
+      const SECONDS_DEGREES = ((SECONDS / 60) * 360) + 90;
+
+      HOUR_HAND.style.transform = `rotate(${HOURS_DEGREES}deg)`;
+      MINUTE_HAND.style.transform =`rotate(${MINUTES_DEGREES}deg)`;
+      SECOND_HAND.style.transform = `rotate(${SECONDS_DEGREES}deg)`;
+    }
+
+    setInterval(setDate, 1000);
+
+    setDate();
   </script>
 </body>
 </html>
